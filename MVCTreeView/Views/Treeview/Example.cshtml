@@ -1,0 +1,64 @@
+﻿
+<link href="~/Content/jsTree/themes/default/style.min.css" rel="stylesheet" /><div id="categories"></div>
+<br><br>
+<button id="create">
+    Create node
+</button>
+@section scripts
+    {
+    <script src="~/Scripts/jsTree3/jstree.min.js"></script>
+    <script>
+        $(function () {
+            var managerTeam = [{
+                "id": "m1",
+                "text": "M1",
+                "children": [{
+                    "parent": "m1",
+                    "text": "T1"
+                }, {
+                    "parent": "m1",
+                    "text": "T2"
+                }, {
+                    "parent": "m1",
+                    "text": "M2"
+                }, {
+                    "parent": "m1",
+                    "text": "T3"
+                }, {
+                    "id": "m3",
+                    "parent": "m1",
+                    "text": "M3",
+                    "children": [{
+                        "parent": "m3",
+                        "text": "T6"
+                    }, {
+                        "parent": "m3",
+                        "text": "T7"
+                    }],
+                    "state": {
+                        "opened": true
+                    }
+                }],
+                "state": {
+                    "opened": true
+                }
+            }];
+
+            $("#categories")
+                .jstree({
+                    "core": {
+                        "data": managerTeam,
+                        "check_callback": true
+                    }
+                });
+
+
+            $('#create').click(function () {
+                $('#categories').jstree('create_node', 'm3', {
+                    data: 'Foo'
+                });
+            })
+        });
+    </script>
+}
+

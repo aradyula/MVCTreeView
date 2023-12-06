@@ -1,0 +1,111 @@
+﻿@model IEnumerable<MVCTreeView.Models.Category1>
+@using MVCTreeView.Models;
+
+@{
+    ViewBag.Title = "CIndex";
+}
+
+<h2>TreeView</h2>
+<link href="~/Content/jsTree/themes/default/style.min.css" rel="stylesheet" />
+<div class="form-body">
+    <div id="jstree">
+        @(Html.TreeView(Model).EmptyContent("root")
+                        .Children(m => m.Categories1)
+                        .HtmlAttributes(new { id = "tree" })
+                        .ChildrenHtmlAttributes(new { @class = "subItem" })
+                        .ItemText(m => m.Name)
+                        .ItemTemplate(
+                        @<text>
+                            <a href="@item.Description" desc="@item.Description">@item.Name</a>
+                        </text>)
+        )
+    </div>
+    <input type="text" class="form-control" id="folder_name" style="margin-bottom:10px;" />
+    <input type="button" value="Submit" id="btn_tree" />
+</div>
+@section scripts
+    {
+    <script src="~/Scripts/jsTree3/jstree.min.js"></script>
+    <script>
+        var node;
+        $(function () {
+            var selectedData;
+            //$('#jstree').jstree({
+            //    "core": {
+            //        "multiple": true,
+            //        "check_callback": true,
+            //        'themes': {
+            //            "responsive": true,
+            //            'variant': 'large',
+            //            'stripes': false,
+            //            'dots': false
+            //        }
+            //    },
+            //    "types": {
+            //        //"default": {
+            //        //    "icon": "fa fa-folder icon-state-warning icon-lg"
+            //        //},
+            //        "file": {
+            //            "icon": "fa fa-file icon-state-warning icon-lg"
+            //        }
+            //    },
+            //    "plugins": ["dnd", "state", "types", "sort", "checkbox", "search"],
+
+            //});
+            $('#jstree').jstree({
+                "core": {
+                    "animation": 0,
+                    "check_callback": true,
+                    "themes": { "responsive": true, },
+                    
+                },
+                "types": {
+                    "default": {
+                        "icon": "glyphicon glyphicon-ok"
+                    },
+                    "demo": {
+                        "icon": "glyphicon glyphicon-flash"
+                    }
+                },
+                "plugins": [
+                    "contextmenu", "dnd", "search",
+                     "types", "checkbox"
+                ]
+            });
+
+
+
+            $('#jstree').on("changed.jstree", function (e, data) {
+                //debugger;
+                node = data.instance.get_node(data.selected[0]);
+                //alert(node.text);
+                if (data.selected.length) {
+                    //debugger;
+                    $(data.selected).each(function (idx) {
+                        var node = data.instance.get_node(data.selected[idx]);
+                        //alert(node.text);
+                    });
+                }
+            });
+            $("#btn_tree").click(function () {
+
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    url: "/Treeview/Save",
+                    data: {
+                        parent_id: node.id,
+                        name: $("#folder_name").val()
+                    },
+                    datatype: "json",
+                    success: function () {
+                        console.log("added");
+                        $('#jstree').jstree(true).refresh()
+                    }
+
+                })
+            });
+        });
+
+    </script>
+}
